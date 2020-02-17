@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+    <title>Rijnlaan 131 Upsidedown world</title>
+    <style>
+        html, body {
+            margin: 0; padding: 0; overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <script src="three/three.js"></script>
+    <script src="three/OrbitControls.js"></script>
+    <script src="three/Tree.js"></script>
+    <script src="three/TreeGeometry.js"></script>
+    <script src="three/TreeHelper.js"></script>
+    <script> // not working, framerate per second
+        (function()
+        {
+            var script=document.createElement('script');
+            script.onload=function()
+            {
+                var stats=new Stats();
+                document.body.appendChild(stats.dom);
+                requestAnimationFrame(function loop()
+                {
+                    stats.update();requestAnimationFrame(loop)
+                });
+            };
+            script.src='//mrdoob.github.io/stats.js/build/stats.min.js';
+            document.head.appendChild(script);
+        })
+        </script>
+    <script src="scene.js"></script>
+</body>
+</html>
