@@ -119,6 +119,42 @@ sign.position.set(80,-6,80);
 
 var body = new THREE.BoxGeometry()
 
+//Trees
+var trees = new THREE.Group();
+
+var treeGeometries = new THREE.Tree({
+    generations : 4,        // # for branch' hierarchy
+    length      : 15.0,      // length of root branch
+    uvLength    : 8.0,     // uv.v ratio against geometry length (recommended is generations * length)
+    radius      : 0.8,      // radius of root branch
+    radiusSegments : 8,     // # of radius segments for each branch geometry
+    heightSegments : 8      // # of height segments for each branch geometry
+});
+
+var treeGeometry = THREE.TreeGeometry.build(treeGeometries);
+var tree = new THREE.Mesh( treeGeometry, new THREE.MeshLambertMaterial( { map: new THREE.TextureLoader().load( imagePrefix+'treePattern.png' ) } ) );
+tree.position.set(-45, -6, 0);
+
+var tree1 = tree.clone();
+tree1.rotation.y = 0.5;
+tree1.position.set(-45, -6, -40);
+
+var tree2 = tree.clone();
+tree2.rotation.y = 0.75;
+tree2.position.set(-45, -6, -80);
+
+var tree3 = tree.clone();
+tree3.rotation.y = 0.1;
+tree3.position.set(-45, -6, -120);
+
+trees.add(
+	tree,
+	tree1,
+	tree2,
+	tree3
+	);
+scene.add(trees);
+
 
 //ambientlight
 var light = new THREE.AmbientLight(0x6e0f02,0.5);
@@ -154,6 +190,15 @@ controls.noKeys = true;
 // Create renderer
 var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+//viewport rezising
+window.addEventListener( 'resize', function(  ) {
+	var width = window.innerWidth;
+	var height = window.innerHeight;
+	renderer.setSize( width, height );
+	camera.aspect = width / height;
+	camera.updateProjectionMatrix();
+} );
 
 render();
 
