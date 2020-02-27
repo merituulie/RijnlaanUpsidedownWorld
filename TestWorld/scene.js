@@ -81,7 +81,7 @@ var material = new THREE.MeshPhongMaterial({ color: 0xcccccc });
 var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-function plane(x,y,z, image,repX,repY){
+function plane(x,y,z,image,repX,repY){
 	var planeGeometry = new THREE.BoxGeometry(x,y,z);
 	var texture = new THREE.TextureLoader().load(imagePrefix+image+'.jpg', function(texture){
 		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -115,9 +115,41 @@ grass.position.set(0,-6,0);
 //Aldi sign
 var sign = new THREE.Group();
 scene.add(sign);
-sign.position.set(80,-6,80);
+sign.position.set(80,5,80);
 
-var body = new THREE.BoxGeometry()
+//pole of the sign
+var poleGeometry = new THREE.BoxGeometry(10,150,8);
+var material = new THREE.MeshPhongMaterial({color: 0x000000});
+var pole = new THREE.Mesh(poleGeometry,material);
+
+//main square of the sign
+var signCubeGeometry = new THREE.BoxGeometry(30,40,12);
+var material = new THREE.MeshPhongMaterial({color: 0x000000});
+var signCube = new THREE.Mesh(signCubeGeometry,material);
+signCube.position.set(-8,50,0);
+
+//The letter a on the sign
+var loader = new THREE.FontLoader();
+var logoGeometry;
+loader.load( imagePrefix+'font.json', function ( font ) {
+
+	logoGeometry = new THREE.TextGeometry( 'Hello three.js!', {
+		font: font,
+		size: 200,
+		height: 5,
+		curveSegments: 12,
+		bevelEnabled: false
+	} );
+	console.log(font);
+} );
+var material = new THREE.MeshLambertMaterial({color: 0x0000ff})
+var logo = new THREE.Mesh(logoGeometry,material);
+
+sign.add(
+	pole,
+	signCube,
+	logo
+)
 
 
 //ambientlight
