@@ -24,18 +24,20 @@ var camera = new THREE.PerspectiveCamera(
 	60, // fov — Camera frustum vertical field of view.
 	window.innerWidth/window.innerHeight, // aspect — Camera frustum aspect ratio.
 	0.1, // near — Camera frustum near plane.
-	1000); // far — Camera frustum far plane. 
+	5000); // far — Camera frustum far plane. 
 
 var camHolder = new THREE.Group();
 camHolder.add(camera);
 camHolder.position.set(0,5,20);
 scene.add(camHolder);
 
-var speedTrans = 20;
+var speedTrans = 200;
 var speedRot = THREE.Math.degToRad(45);
 
 var clock = new THREE.Clock();
 var delta = 0;
+var noClip = false;
+var camNoClip;
 
 document.addEventListener('keydown', function(evt) {
 
@@ -71,6 +73,16 @@ document.addEventListener('keydown', function(evt) {
 	if (evt.keyCode === 40) {
 	  	camera.rotation.x += -speedRot * delta;
 	} // down arrow, looking deeper
+
+	//no clip mode
+	if(evt.keyCode == 27){
+		if(!noClip){
+			camNoClip = camHolder;
+		}else{
+			camHolder = camNoClip;
+		}
+		noClip = !noClip;
+	}
 });
 
 
@@ -83,29 +95,69 @@ scene.add(cube);
 
 function plane(x,y,z,image,repX,repY){
 	var planeGeometry = new THREE.BoxGeometry(x,y,z);
-	var texture = new THREE.TextureLoader().load(imagePrefix+image+'.jpg', function(texture){
-		texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-		texture.offset.set(0,0);
-		texture.repeat.set(repX,repY);
-	});
-	var material = new THREE.MeshLambertMaterial({map: texture});
+	var material = null;
+	if(image != ''){
+		var texture = new THREE.TextureLoader().load(imagePrefix+image+'.jpg', function(texture){
+			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+			texture.offset.set(0,0);
+			texture.repeat.set(repX,repY);
+		});
+		material = new THREE.MeshLambertMaterial({map: texture});
+	}else{
+		material = new THREE.MeshBasicMaterial({color: 0x000000});
+	}
+	
 	var plane = new THREE.Mesh(planeGeometry,material);
 	return plane;
 };
 
 //road
-var road = plane(40,1,1000,'road',1,5)
+var road = plane(40,1,1000,'road',1,5);
 scene.add(road);
 road.position.set(0,-5,0);
 
-//sidewalk
-var plane1 = plane(40,2,1000,'sidewalk',2,30);
-scene.add(plane1);
-plane1.position.set(40,-4,0);
+var sideRoad = plane(40,1,1000,'road',1,5);
+scene.add(sideRoad);
+sideRoad.rotation.y += 90*(Math.PI/180);
+sideRoad.position.set(520,-5,0);
 
-var plane2 = plane(40,2,1000,'sidewalk',2,30);
-scene.add(plane2);
-plane2.position.set(-40,-4,0);
+var aldiRoad = plane(40,1,40,'road',1,1);
+scene.add(aldiRoad);
+aldiRoad.rotation.y += 90*(Math.PI/180);
+aldiRoad.position.set(40,-5,-400);
+
+//sidewalk
+var rightSidewalk1 = plane(20,2,500,'sidewalk',1,15);
+rightSidewalk1.position.set(30,-4,270);
+
+var rightSidewalk2 = plane(20,2,360,'sidewalk',1,15);
+rightSidewalk2.position.set(30,-4,-200);
+
+var rightSidewalk3 = plane(20,2,80,'sidewalk',1,3);
+rightSidewalk3.position.set(30,-4,-460);
+
+var leftSidewalk = plane(20,2,1000,'sidewalk',1,30);
+leftSidewalk.position.set(-30,-4,0);
+
+var leftSideRoadSidewalk = plane(20,2,500,'sidewalk',1,15);
+leftSideRoadSidewalk.rotation.y += 90*(Math.PI/180);
+leftSideRoadSidewalk.position.set(290,-4,-30);
+
+var rightSideRoadSidewalk = plane(20,2,500,'sidewalk',1,15);
+rightSideRoadSidewalk.rotation.y += 90*(Math.PI/180);
+rightSideRoadSidewalk.position.set(290,-4,30);
+
+var sideWalk = new THREE.Group();
+scene.add(sideWalk);
+
+sideWalk.add(
+	rightSidewalk1,
+	rightSidewalk2,
+	rightSidewalk3,
+	leftSidewalk,
+	leftSideRoadSidewalk,
+	rightSideRoadSidewalk
+)
 
 //grass
 var grass = plane(5000,1,5000,'grass',80,100);
@@ -115,54 +167,176 @@ grass.position.set(0,-6,0);
 //Aldi sign
 var sign = new THREE.Group();
 scene.add(sign);
-sign.position.set(80,5,80);
+sign.position.set(55,0,-450);
+sign.scale.set(0.5,0.5,0.5);
 
 //pole of the sign
-var poleGeometry = new THREE.BoxGeometry(10,150,8);
-var material = new THREE.MeshPhongMaterial({color: 0x000000});
+var poleGeometry = new THREE.BoxGeometry(10,85,8);
+var material = new THREE.MeshBasicMaterial({color: 0x000000});
 var pole = new THREE.Mesh(poleGeometry,material);
+pole.position.set(0,31,0);
 
 //main square of the sign
 var signCubeGeometry = new THREE.BoxGeometry(30,40,12);
-var material = new THREE.MeshPhongMaterial({color: 0x000000});
+var material = new THREE.MeshBasicMaterial({color: 0x7a7a7a});
 var signCube = new THREE.Mesh(signCubeGeometry,material);
 signCube.position.set(-8,50,0);
 
-//The letter a on the sign
+//The aldi logo on the sign
 var loader = new THREE.FontLoader();
-var logoGeometry;
 loader.load( imagePrefix+'font.json', function ( font ) {
 
-	logoGeometry = new THREE.TextGeometry( 'Hello three.js!', {
+	var logoGeometry = new THREE.TextGeometry( 'A', {
 		font: font,
-		size: 200,
-		height: 5,
+		size: 32,
+		height: 1,
 		curveSegments: 12,
 		bevelEnabled: false
 	} );
-	console.log(font);
+
+	var material = new THREE.MeshLambertMaterial({color: 0x0000ff})
+	var logo = new THREE.Mesh(logoGeometry,material);
+	logo.position.set(-17,39,6);
+	var logoBackside = logo.clone();
+	logoBackside.rotation.y = 180*(Math.PI/180);
+	logoBackside.position.set(3,39,-6);
+
+	var logoGeometryWord = new THREE.TextGeometry('aldi',{
+		font:font,
+		size: 6,
+		height: 1,
+		curveSegments:12,
+		bevelEnabled: false
+	});
+
+	var material = new THREE.MeshLambertMaterial({color: 0x0000ff})
+	var logoWord = new THREE.Mesh(logoGeometryWord,material);
+	logoWord.position.set(-14,33,6);
+	var logoBacksideWord = logoWord.clone();
+	logoBacksideWord.rotation.y = 180*(Math.PI/180);
+	logoBacksideWord.position.set(2,33,-6);
+
+	sign.add(
+		logo,
+		logoBackside,
+		logoWord,
+		logoBacksideWord
+	);
 } );
-var material = new THREE.MeshLambertMaterial({color: 0x0000ff})
-var logo = new THREE.Mesh(logoGeometry,material);
 
 sign.add(
 	pole,
-	signCube,
-	logo
+	signCube
+)
+//parkinglot of aldi
+var parkingLot = plane(200,2,150,'parkingLot',1,1);
+scene.add(parkingLot);
+parkingLot.rotation.y += 90*(Math.PI/180);
+parkingLot.position.set(135,-5,-400);
+
+//aldi building
+var aldiBuilding = new THREE.Group();
+scene.add(aldiBuilding);
+aldiBuilding.position.set(310,-5,-400);
+
+//main part of the building
+var mainCube = plane(150,30,160,'damagedTile',2,1);
+mainCube.position.set(10,15,0);
+
+//baseground of building
+var concretePlane = plane(200,2,200,'concrete',5,5);
+
+//overhang of entrance
+var overHangEntrance = plane(15,5,90,'aluminiumPanel',3,1);
+overHangEntrance.position.set(-72.5,17.5,-35);
+
+//extension of the entrance
+var extraCube = plane(15,20,70,'damagedTile',1,1);
+extraCube.position.set(-72.5,10,45);
+
+//roof of extention and overhang
+var lowerRoof = plane(15,1,160,'',1,1);
+lowerRoof.position.set(-72.5,20.5,0);
+
+//roof of mainCube
+var upperRoof = plane(150,1,160,'',1,1);
+upperRoof.position.set(10,30,0);
+
+//broken windows
+var window1 = plane(22,1,15,'brokenGlass',1,1);
+window1.rotation.z += 90*(Math.PI/180);
+window1.rotation.x += 90*(Math.PI/180);
+window1.position.set(-65,10,-25);
+
+var window2 = plane(22,1,15,'brokenGlass',1,1);
+window2.rotation.z += 90*(Math.PI/180);
+window2.rotation.x += 90*(Math.PI/180);
+window2.position.set(-65,10,0);
+
+var doubleDoor = plane(40,1,18,'glassDoubleDoor',1,1);
+doubleDoor.rotation.z += 90*(Math.PI/180);
+doubleDoor.rotation.x += 90*(Math.PI/180);
+doubleDoor.position.set(-65,10,-60);
+
+//logos of the aldi on the building
+var loader = new THREE.FontLoader();
+loader.load( imagePrefix+'font.json', function ( font ) {
+
+	var logoGeometry = new THREE.TextGeometry( 'A', {
+		font: font,
+		size: 16,
+		height: 1,
+		curveSegments: 12,
+		bevelEnabled: false
+	} );
+
+	var material = new THREE.MeshLambertMaterial({color: 0x0000ff})
+	var logo = new THREE.Mesh(logoGeometry,material);
+	logo.position.set(-80,4,40);
+	logo.rotation.y -= 90*(Math.PI/180);
+
+	var logoGeometryWord = new THREE.TextGeometry('aldi',{
+		font:font,
+		size: 5,
+		height: 1,
+		curveSegments:12,
+		bevelEnabled: false
+	});
+
+	var material = new THREE.MeshLambertMaterial({color: 0x0000ff})
+	var logoWord = new THREE.Mesh(logoGeometryWord,material);
+	logoWord.position.set(-80,15.5,-70);
+	logoWord.rotation.y -= 90*(Math.PI/180);
+
+	aldiBuilding.add(
+		logo,
+		logoWord,
+	)
+});
+
+aldiBuilding.add(
+	mainCube,
+	concretePlane,
+	overHangEntrance,
+	extraCube,
+	lowerRoof,
+	upperRoof,
+	window1,
+	window2,
+	doubleDoor,
 )
 
-
 //ambientlight
-var light = new THREE.AmbientLight(0x6e0f02,0.5);
+var light = new THREE.AmbientLight(0x6e0f02,1);
 scene.add(light);
 
 //spotlight
-keyLight = new THREE.DirectionalLight(0xdddddd, 1);
+var keyLight = new THREE.DirectionalLight(0xdddddd, 1);
 keyLight.position.set(-80, 80, 80);
 scene.add(keyLight);
 
 //lighthelper
-keyLightHelper = new THREE.DirectionalLightHelper(keyLight, 15);
+var keyLightHelper = new THREE.DirectionalLightHelper(keyLight, 15);
 scene.add(keyLightHelper);
 
 
@@ -173,7 +347,10 @@ var render = function(){
 	cube.rotation.x += 0.3 * delta;
 	cube.rotation.y += 0.3 * delta;
 
-	//controls.update();
+	if(noClip){
+		controls.update();
+	}
+
 	renderer.render(scene, camera);	
 }
 
