@@ -234,7 +234,6 @@ scene.add(parkingLot);
 parkingLot.rotation.y += 90*(Math.PI/180);
 parkingLot.position.set(135,-5,-400);
 
-<<<<<<< HEAD
 //aldi building
 var aldiBuilding = new THREE.Group();
 scene.add(aldiBuilding);
@@ -326,7 +325,6 @@ aldiBuilding.add(
 	window2,
 	doubleDoor,
 )
-=======
 //Trees
 var trees = new THREE.Group();
 
@@ -363,7 +361,6 @@ trees.add(
 	);
 scene.add(trees);
 
->>>>>>> 85d5c19dc5f6770ab4ba8e6d9a1cf09643aa1459
 
 //ambientlight
 var light = new THREE.AmbientLight(0x6e0f02,1);
