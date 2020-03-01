@@ -27,7 +27,7 @@ var camera = new THREE.PerspectiveCamera(
 
 var camHolder = new THREE.Group();
 camHolder.add(camera);
-camHolder.position.set(0,5,20);
+camHolder.position.set(0,12,20);
 scene.add(camHolder);
 
 var speedTrans = 200;
