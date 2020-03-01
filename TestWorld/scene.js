@@ -263,12 +263,12 @@ var upperRoof = plane(150,1,160,'',1,1);
 upperRoof.position.set(10,30,0);
 
 //broken windows
-var window1 = plane(22,1,15,'brokenGlass',1,1);
+var window1 = plane(22,1,15,'brokenGlassWithFrame',1,1);
 window1.rotation.z += 90*(Math.PI/180);
 window1.rotation.x += 90*(Math.PI/180);
 window1.position.set(-65,10,-25);
 
-var window2 = plane(22,1,15,'brokenGlass',1,1);
+var window2 = plane(22,1,15,'brokenGlassWithFrame',1,1);
 window2.rotation.z += 90*(Math.PI/180);
 window2.rotation.x += 90*(Math.PI/180);
 window2.position.set(-65,10,0);
@@ -325,6 +325,330 @@ aldiBuilding.add(
 	window2,
 	doubleDoor,
 )
+
+//Big apartmentbuilding
+var rijnlaanDorm = new THREE.Group();
+scene.add(rijnlaanDorm);
+rijnlaanDorm.rotation.y -= 12*(Math.PI/180);
+rijnlaanDorm.scale.set(.6,1,1);
+rijnlaanDorm.position.set(200,-1,240);
+
+var mainBuildingTop = plane(150,40,250,'weatheredBrick',8,3);
+mainBuildingTop.position.set(0,35,0);
+
+var mainBuildingBottom = plane(148,20,250,'greyBrick',8,2);
+mainBuildingBottom.position.set(1,5,0);
+
+var sideBlockTop = plane(65,36,30,'damagedWood',2,2);
+sideBlockTop.position.set(25,33,-140);
+
+var sideBlockBottom = plane(65,20,30,'greyBrick',2,2);
+sideBlockBottom.position.set(25,5,-140);
+//roof
+var roofMainBuilding = plane(152,1,250,'',1,1);
+roofMainBuilding.position.set(0,55.5,0);
+
+var roofSideBuilding = plane(100,1,40, '',1,1);
+roofSideBuilding.position.set(25,55,-145);
+
+var roofGeometry = new THREE.BoxGeometry(100,4,40);
+var material = new THREE.MeshLambertMaterial({color: 0xbd6202});
+var roofSideBuildingExtend = new THREE.Mesh(roofGeometry,material);
+roofSideBuildingExtend.position.set(25,53,-145);
+
+//walkway
+var walkwayModel = plane(65,1,8,'concrete',1,1);
+var walkwayRailingModel = plane(100,5,.5,'',1,1);
+var walkwaySideModel = plane(38,1,19,'concrete',1,1);
+var walkwayRailingSideModel = plane(40,5,.5,'',1,1);
+
+var walkway1 = walkwayModel.clone();
+walkway1.position.set(25,14.5,-159);
+
+var walkway2 = walkwaySideModel.clone();
+walkway2.rotation.y += 90*(Math.PI/180);
+walkway2.position.set(66,14.5,-144);
+
+var walkway3 = walkwaySideModel.clone();
+walkway3.rotation.y += 90*(Math.PI/180);
+walkway3.position.set(-17,14.5,-144);
+
+var walkway4 = walkwayModel.clone();
+walkway4.position.set(25,27,-159);
+
+var walkway5 = walkwaySideModel.clone();
+walkway5.rotation.y += 90*(Math.PI/180);
+walkway5.position.set(66,27,-144);
+
+var walkway6 = walkwaySideModel.clone();
+walkway6.rotation.y += 90*(Math.PI/180);
+walkway6.position.set(-17,27,-144);
+
+var walkway7 = walkwayModel.clone();
+walkway7.position.set(25,39.5,-159);
+
+var walkway8 = walkwaySideModel.clone();
+walkway8.rotation.y += 90*(Math.PI/180);
+walkway8.position.set(66,39.5,-144);
+
+var walkway9 = walkwaySideModel.clone();
+walkway9.rotation.y += 90*(Math.PI/180);
+walkway9.position.set(-17,39.5,-144);
+
+var walkwayRailing1 = walkwayRailingModel.clone();
+walkwayRailing1.position.set(25,17.5,-162);
+
+var walkwayRailing2 = walkwayRailingSideModel.clone();
+walkwayRailing2.rotation.y += 90*(Math.PI/180);
+walkwayRailing2.position.set(75,17.5,-142.25);
+
+var walkwayRailing3 = walkwayRailingSideModel.clone();
+walkwayRailing3.rotation.y += 90*(Math.PI/180);
+walkwayRailing3.position.set(-25,17.5,-142.25);
+
+var walkwayRailing4 = walkwayRailingModel.clone();
+walkwayRailing4.position.set(25,30,-162);
+
+var walkwayRailing5 = walkwayRailingSideModel.clone();
+walkwayRailing5.rotation.y += 90*(Math.PI/180);
+walkwayRailing5.position.set(75,30,-142.25);
+
+var walkwayRailing6 = walkwayRailingSideModel.clone();
+walkwayRailing6.rotation.y += 90*(Math.PI/180);
+walkwayRailing6.position.set(-25,30,-142.25);
+
+var walkwayRailing7 = walkwayRailingModel.clone();
+walkwayRailing7.position.set(25,42.5,-162);
+
+var walkwayRailing8 = walkwayRailingSideModel.clone();
+walkwayRailing8.rotation.y += 90*(Math.PI/180);
+walkwayRailing8.position.set(75,42.5,-142.25);
+
+var walkwayRailing9 = walkwayRailingSideModel.clone();
+walkwayRailing9.rotation.y += 90*(Math.PI/180);
+walkwayRailing9.position.set(-25,42.5,-142.25);
+
+//door
+var door = plane(.5,18,15,'door',1,1);
+door.rotation.y += 90*(Math.PI/180);
+door.position.set(-20,4,-125);
+
+//dividers of the building
+var pillarModel = plane(5,60,5,'weatheredBrick',1,6);
+var smallPillarModel = plane(5,20,5,'weatheredBrick',1,2);
+
+var pillarHigh1 = pillarModel.clone();
+pillarHigh1.position.set(-73.5,25,-62.5);
+
+var pillarHigh2 = pillarModel.clone();
+pillarHigh2.position.set(-73.5,25,0);
+
+var pillarHigh3 = pillarModel.clone();
+pillarHigh3.position.set(-73.5,25,62.5);
+
+var smallPillar1 = smallPillarModel.clone();
+smallPillar1.position.set(-72.5,5,-93.75);
+
+var smallPillar2 = smallPillarModel.clone();
+smallPillar2.position.set(-72.5,5,-31.25);
+
+var smallPillar3 = smallPillarModel.clone();
+smallPillar3.position.set(-72.5,5,31.25);
+
+var smallPillar4 = smallPillarModel.clone();
+smallPillar4.position.set(-72.5,5,93.75);
+
+//Windows
+var windowModel = plane(0.5,15,20,'brokenGlassWithFrame',1,1);
+var smallWindowModel = plane(.5,10,15,'brokenGlassWithFrame',1,1);
+var smallWindowSideModel = plane(.5,10,30,'brokenGlassWithFrame',1,1);
+var smallWindowSide2Model = plane(.5,8,15,'brokenGlassWithFrameSide',1,1,);
+
+var windowFront1 = windowModel.clone();
+windowFront1.position.set(-73,5,78); 
+
+var windowFront2 = windowModel.clone();
+windowFront2.position.set(-73,5,47);
+
+var windowFront3 = windowModel.clone();
+windowFront3.rotation.x += 180*(Math.PI/180);
+windowFront3.position.set(-73,5,16);
+
+var windowFront4 = windowModel.clone();
+windowFront4.position.set(-73,5,-16);
+
+var windowFront5 = windowModel.clone();
+windowFront5.rotation.x += 180*(Math.PI/180);
+windowFront5.position.set(-73,5,-47);
+
+var windowFront6 = windowModel.clone();
+windowFront6.position.set(-73,5,-78);
+
+var windowFront7 = windowModel.clone();
+windowFront7.position.set(-73,5,-109);
+///left
+var smallWindowFront1 = smallWindowModel.clone();
+smallWindowFront1.position.set(-75,23,-76);
+
+var smallWindowFront2 = smallWindowModel.clone();
+smallWindowFront2.position.set(-75,35,-85);
+
+var smallWindowFront3 = smallWindowModel.clone();
+smallWindowFront3.position.set(-75,47,-76);
+///right
+var smallWindowFront4 = smallWindowModel.clone();
+smallWindowFront4.position.set(-75,23,-49);
+
+var smallWindowFront5 = smallWindowModel.clone();
+smallWindowFront5.position.set(-75,35,-40);
+
+var smallWindowFront6 = smallWindowModel.clone();
+smallWindowFront6.position.set(-75,47,-49);
+///left
+var smallWindowFront7 = smallWindowModel.clone();
+smallWindowFront7.position.set(-75,23,-13);
+
+var smallWindowFront8 = smallWindowModel.clone();
+smallWindowFront8.position.set(-75,35,-22);
+
+var smallWindowFront9 = smallWindowModel.clone();
+smallWindowFront9.position.set(-75,47,-13);
+///right
+var smallWindowFront10 = smallWindowModel.clone();
+smallWindowFront10.position.set(-75,23,13);
+
+var smallWindowFront11 = smallWindowModel.clone();
+smallWindowFront11.position.set(-75,35,22);
+
+var smallWindowFront12 = smallWindowModel.clone();
+smallWindowFront12.position.set(-75,47,13);
+///left
+var smallWindowFront13 = smallWindowModel.clone();
+smallWindowFront13.position.set(-75,23,49);
+
+var smallWindowFront14 = smallWindowModel.clone();
+smallWindowFront14.position.set(-75,35,40);
+
+var smallWindowFront15 = smallWindowModel.clone();
+smallWindowFront15.position.set(-75,47,49);
+///right
+var smallWindowFront16 = smallWindowModel.clone();
+smallWindowFront16.position.set(-75,23,76);
+
+var smallWindowFront17 = smallWindowModel.clone();
+smallWindowFront17.position.set(-75,35,85);
+
+var smallWindowFront18 = smallWindowModel.clone();
+smallWindowFront18.position.set(-75,47,76);
+///left
+var smallWindowFront19 = smallWindowModel.clone();
+smallWindowFront19.position.set(-75,23,113);
+
+var smallWindowFront20 = smallWindowModel.clone();
+smallWindowFront20.position.set(-75,35,104);
+
+var smallWindowFront21 = smallWindowModel.clone();
+smallWindowFront21.position.set(-75,47,113);
+//side
+var smallWindowSide1 = smallWindowSideModel.clone();
+smallWindowSide1.rotation.y += 90*(Math.PI/180);
+smallWindowSide1.position.set(-55,21,-125);
+
+var smallWindowSide2 = smallWindowSideModel.clone();
+smallWindowSide2.rotation.y += 90*(Math.PI/180);
+smallWindowSide2.position.set(-45,33.5,-125);
+
+var smallWindowSide3 = smallWindowSideModel.clone();
+smallWindowSide3.rotation.y += 90*(Math.PI/180);
+smallWindowSide3.position.set(-45,46,-125);
+//sidecube
+var smallWindowSide4 = smallWindowSide2Model.clone();
+smallWindowSide4.rotation.y += 90*(Math.PI/180);
+smallWindowSide4.position.set(23,20,-155);
+
+var smallWindowSide5 = smallWindowSide2Model.clone();
+smallWindowSide5.rotation.y += 90*(Math.PI/180);
+smallWindowSide5.position.set(23,32.5,-155);
+
+var smallWindowSide6 = smallWindowSide2Model.clone();
+smallWindowSide6.rotation.y += 90*(Math.PI/180);
+smallWindowSide6.position.set(23,45,-155);
+
+var smallWindowSide7 = smallWindowSide2Model.clone();
+smallWindowSide7.rotation.y += 90*(Math.PI/180);
+smallWindowSide7.position.set(23,5,-155);
+
+rijnlaanDorm.add(
+	mainBuildingTop,
+	mainBuildingBottom,
+	sideBlockTop,
+	sideBlockBottom,
+	roofMainBuilding,
+	roofSideBuilding,
+	roofSideBuildingExtend,
+	door,
+	pillarHigh1,
+	pillarHigh2,
+	pillarHigh3,
+	smallPillar1,
+	smallPillar2,
+	smallPillar3,
+	smallPillar4,
+	windowFront1,
+	windowFront2,
+	windowFront3,
+	windowFront4,
+	windowFront5,
+	windowFront6,
+	windowFront7,
+	smallWindowFront1,
+	smallWindowFront2,
+	smallWindowFront3,
+	smallWindowFront4,
+	smallWindowFront5,
+	smallWindowFront6,
+	smallWindowFront7,
+	smallWindowFront8,
+	smallWindowFront9,
+	smallWindowFront10,
+	smallWindowFront11,
+	smallWindowFront12,
+	smallWindowFront13,
+	smallWindowFront14,
+	smallWindowFront15,
+	smallWindowFront16,
+	smallWindowFront17,
+	smallWindowFront18,
+	smallWindowFront19,
+	smallWindowFront20,
+	smallWindowFront21,
+	smallWindowSide1,
+	smallWindowSide2,
+	smallWindowSide3,
+	smallWindowSide4,
+	smallWindowSide5,
+	smallWindowSide6,
+	smallWindowSide7,
+	walkway1,
+	walkway2,
+	walkway3,
+	walkway4,
+	walkway5,
+	walkway6,
+	walkway7,
+	walkway8,
+	walkway9,
+	walkwayRailing1,
+	walkwayRailing2,
+	walkwayRailing3,
+	walkwayRailing4,
+	walkwayRailing5,
+	walkwayRailing6,
+	walkwayRailing7,
+	walkwayRailing8,
+	walkwayRailing9,
+)
+
 //Trees
 var trees = new THREE.Group();
 
@@ -358,9 +682,8 @@ trees.add(
 	tree1,
 	tree2,
 	tree3
-	);
+);
 scene.add(trees);
-
 
 //ambientlight
 var light = new THREE.AmbientLight(0x6e0f02,1);
