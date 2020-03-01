@@ -38,6 +38,7 @@ var clock = new THREE.Clock();
 var delta = 0;
 var noClip = false;
 var camNoClip;
+var loadingSign = false;
 
 document.addEventListener('keydown', function(evt) {
 
@@ -211,8 +212,9 @@ loader.load( imagePrefix+'font.json', function ( font ) {
 
 	var material = new THREE.MeshLambertMaterial({color: 0x0000ff})
 	var logoWord = new THREE.Mesh(logoGeometryWord,material);
-	logoWord.position.set(-14,33,6);
 	var logoBacksideWord = logoWord.clone();
+	logoWord.rotation.z -= 50*(Math.PI/180);
+	logoWord.position.set(-14,33,6);
 	logoBacksideWord.rotation.y = 180*(Math.PI/180);
 	logoBacksideWord.position.set(2,33,-6);
 
@@ -222,6 +224,8 @@ loader.load( imagePrefix+'font.json', function ( font ) {
 		logoWord,
 		logoBacksideWord
 	);
+
+	loadingSign = true;
 } );
 
 sign.add(
@@ -706,12 +710,33 @@ var render = function(){
 	cube.rotation.x += 0.3 * delta;
 	cube.rotation.y += 0.3 * delta;
 
+	rotateSign(delta);
+
 	if(noClip){
 		controls.update();
 	}
 
 	renderer.render(scene, camera);	
 }
+
+var degSign = 0;
+var step = +1;
+
+function rotateSign(x){
+	if(loadingSign){
+		if(degSign >= 150){
+			step = -1;
+		}
+		if(degSign <= 1){
+			step = +1;
+		}
+		
+		sign.children[4].rotation.z -= .5*(Math.PI/180) * step;
+	
+		degSign += step;
+		console.log('test '+degSign);
+	}
+};
 
 //controls
 controls = new THREE.OrbitControls(camera); 
