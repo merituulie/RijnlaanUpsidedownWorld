@@ -15,7 +15,6 @@ for (var i = 0; i < 6; i++)
 }
 	
 var skyGeometry = new THREE.CubeGeometry(1000, 1000, 1000);	
-//var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
 var skyBox = new THREE.Mesh(skyGeometry, materialArray);
 scene.add(skyBox);
 
@@ -24,7 +23,7 @@ var camera = new THREE.PerspectiveCamera(
 	60, // fov — Camera frustum vertical field of view.
 	window.innerWidth/window.innerHeight, // aspect — Camera frustum aspect ratio.
 	0.1, // near — Camera frustum near plane.
-	5000); // far — Camera frustum far plane. 
+	1000); // far — Camera frustum far plane. 
 
 var camHolder = new THREE.Group();
 camHolder.add(camera);
@@ -32,7 +31,7 @@ camHolder.position.set(0,5,20);
 scene.add(camHolder);
 
 var speedTrans = 200;
-var speedRot = THREE.Math.degToRad(45);
+var speedRot = THREE.Math.degToRad(90);
 
 var clock = new THREE.Clock();
 var delta = 0;
@@ -86,28 +85,25 @@ document.addEventListener('keydown', function(evt) {
 	}
 });
 
+function repeatTextures(texture, repX, repY) {
+	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+	texture.offset.set(0,0);
+	texture.repeat.set(repX,repY);
 
-//cube
-var geometry = new THREE.BoxGeometry(2,2,2);
-//var material = new THREE.MeshNormalMaterial();
-var material = new THREE.MeshPhongMaterial({ color: 0xcccccc });
-var cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+	return texture;
+}
 
-function plane(x,y,z,image,repX,repY){
+function plane(x,y,z, image,repX,repY){
 	var planeGeometry = new THREE.BoxGeometry(x,y,z);
-	var material = null;
-	if(image != ''){
+	if (image != '') {
 		var texture = new THREE.TextureLoader().load(imagePrefix+image+'.jpg', function(texture){
-			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-			texture.offset.set(0,0);
-			texture.repeat.set(repX,repY);
+		texture = repeatTextures(texture, repX, repY);
 		});
-		material = new THREE.MeshLambertMaterial({map: texture});
-	}else{
+		var material = new THREE.MeshLambertMaterial({map: texture});
+	} else 
+	{
 		material = new THREE.MeshBasicMaterial({color: 0x000000});
 	}
-	
 	var plane = new THREE.Mesh(planeGeometry,material);
 	return plane;
 };
@@ -224,14 +220,14 @@ loader.load( imagePrefix+'font.json', function ( font ) {
 		logoWord,
 		logoBacksideWord
 	);
-
 	loadingSign = true;
 } );
 
 sign.add(
 	pole,
 	signCube
-)
+);
+
 //parkinglot of aldi
 var parkingLot = plane(200,2,150,'parkingLot',1,1);
 scene.add(parkingLot);
@@ -328,14 +324,14 @@ aldiBuilding.add(
 	window1,
 	window2,
 	doubleDoor,
-)
+);
 
 //Big apartmentbuilding
 var rijnlaanDorm = new THREE.Group();
 scene.add(rijnlaanDorm);
 rijnlaanDorm.rotation.y -= 12*(Math.PI/180);
 rijnlaanDorm.scale.set(.6,1,1);
-rijnlaanDorm.position.set(200,-1,240);
+rijnlaanDorm.position.set(150,-1,240);
 
 var mainBuildingTop = plane(150,40,250,'weatheredBrick',8,3);
 mainBuildingTop.position.set(0,35,0);
@@ -348,7 +344,8 @@ sideBlockTop.position.set(25,33,-140);
 
 var sideBlockBottom = plane(65,20,30,'greyBrick',2,2);
 sideBlockBottom.position.set(25,5,-140);
-//roof
+
+// Roof
 var roofMainBuilding = plane(152,1,250,'',1,1);
 roofMainBuilding.position.set(0,55.5,0);
 
@@ -651,66 +648,603 @@ rijnlaanDorm.add(
 	walkwayRailing7,
 	walkwayRailing8,
 	walkwayRailing9,
-)
+);
 
-//Trees
+var body = new THREE.BoxGeometry()
+
+// Trees
 var trees = new THREE.Group();
 
 var treeGeometries = new THREE.Tree({
-    generations : 4,        // # for branch' hierarchy
-    length      : 15.0,      // length of root branch
-    uvLength    : 8.0,     // uv.v ratio against geometry length (recommended is generations * length)
-    radius      : 0.8,      // radius of root branch
-    radiusSegments : 8,     // # of radius segments for each branch geometry
-    heightSegments : 8      // # of height segments for each branch geometry
+	generations: 5,        // # for branch' hierarchy
+	length: 28.0,      // length of root branch
+	uvLength: 10.0,     // uv.v ratio against geometry length (recommended is generations * length)
+	radius: 1.5,      // radius of root branch
+	radiusSegments: 8,     // # of radius segments for each branch geometry
+	heightSegments: 8      // # of height segments for each branch geometry
 });
 
 var treeGeometry = THREE.TreeGeometry.build(treeGeometries);
-var tree = new THREE.Mesh( treeGeometry, new THREE.MeshLambertMaterial( { map: new THREE.TextureLoader().load( imagePrefix+'treePattern.png' ) } ) );
+var tree = new THREE.Mesh(treeGeometry, new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'treePattern.png', function(texture) {
+	texture = repeatTextures(texture, 1, 3); 
+	})
+ }) );
 tree.position.set(-45, -6, 0);
 
 var tree1 = tree.clone();
-tree1.rotation.y = 0.5;
-tree1.position.set(-45, -6, -40);
-
+tree1.position.set(-45, -6, tree.position.z - 70);
 var tree2 = tree.clone();
-tree2.rotation.y = 0.75;
-tree2.position.set(-45, -6, -80);
-
+tree2.position.set(-45, -6, tree1.position.z - 70);
 var tree3 = tree.clone();
-tree3.rotation.y = 0.1;
-tree3.position.set(-45, -6, -120);
+tree3.position.set(-45, -6, tree2.position.z - 70);
+var tree4 = tree.clone();
+tree4.position.set(-45, -6, tree3.position.z - 70);
+var tree5 = tree.clone();
+tree5.position.set(-45, -6, tree4.position.z - 70);
+var tree6 = tree.clone();
+tree6.position.set(-45, -6, tree5.position.z - 70);
+var tree7 = tree.clone();
+tree7.position.set(-45, -6, tree6.position.z - 70);
+var tree8 = tree.clone();
+tree8.position.set(-45, -6, tree7.position.z - 70);
+var tree9 = tree.clone();
+tree9.position.set(-45, -6, tree8.position.z - 70);
+var tree10 = tree.clone();
+tree10.position.set(-45, -6, tree9.position.z - 70);
+var tree11 = tree.clone();
+tree11.position.set(-45, -6, tree10.position.z - 70);
+var tree12 = tree.clone();
+tree12.position.set(-45, -6, tree11.position.z - 70);
+var tree13 = tree.clone();
+tree13.position.set(-45, -6, tree12.position.z - 70);
+var tree14 = tree.clone();
+tree14.position.set(-45, -6, tree13.position.z - 70);
+var tree15 = tree.clone();
+tree15.position.set(45, -6, 0);
+var tree16 = tree.clone();
+tree16.position.set(45, -6, tree15.position.z - 70);
+var tree17 = tree.clone();
+tree17.position.set(45, -6, tree16.position.z - 300);
+var tree18 = tree.clone();
+tree18.position.set(45, -6, tree17.position.z - 70);
+var tree19 = tree.clone();
+tree19.position.set(45, -6, tree18.position.z - 70);
+var tree20 = tree.clone();
+tree20.scale.set(0.5, 0.5, 0.5);
+tree20.position.set(120, -6, -460);
+var tree21 = tree20.clone();
+tree21.position.set(110, -6, -455);
 
 trees.add(
 	tree,
 	tree1,
 	tree2,
-	tree3
-);
+	tree3,
+	tree4,
+	tree5,
+	tree6,
+	tree7,
+	tree8,
+	tree9,
+	tree10,
+	tree11,
+	tree12,
+	tree13,
+	tree14,
+	tree15,
+	tree16,
+	tree17,
+	tree18,
+	tree19,
+	tree20,
+	tree21
+	);
+trees.position.set(0, 0, 310);
 scene.add(trees);
 
+var tree13 = tree.clone();
+tree13.position.set(-175, -10, 15);
+scene.add(tree13);
+
+// Bushes
+var bushGeometry = new THREE.BoxGeometry( 130, 40, 5);
+
+var bushMaterials = [
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'dryGrass.png', function(texture) {
+		texture = repeatTextures(texture, 1, 3);
+	}), side: THREE.DoubleSide}), // RIGHT SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'dryGrass.png', function(texture){
+		texture = repeatTextures(texture, 1, 3);
+	}), side: THREE.DoubleSide }), // LEFT SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'dryGrass.png', function(texture){
+		texture = repeatTextures(texture, 5, 1);
+	}),  side: THREE.DoubleSide }), // TOP SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'dryGrass.png', function(texture){
+		texture = repeatTextures(texture, 1, 1);
+	}),  side: THREE.DoubleSide }),// BOTTOM SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'dryGrass.png', function(texture){
+		texture = repeatTextures(texture, 5, 1);
+	}),  side: THREE.DoubleSide }), // FRONT SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'dryGrass.png', function(texture){
+		texture = repeatTextures(texture, 5, 1);
+	}),  side: THREE.DoubleSide }) // BACK SIDE
+];
+var bushMaterial = new THREE.MeshFaceMaterial( bushMaterials );
+var tallBush = new THREE.Mesh( bushGeometry, bushMaterial);
+tallBush.position.set(-130, 0, 28);
+
+var tallBush7 = tallBush.clone();
+tallBush7.position.z = tallBush.position.z + 75;
+
+var tallBush1 = tallBush.clone();
+tallBush1.rotation.y += 90*(Math.PI/180);
+tallBush1.position.x = -195;
+tallBush1.position.z = -35;
+
+var tallBush8 = tallBush1.clone();
+tallBush8.position.x = -67;
+tallBush8.position.z = 95;
+
+var tallBush2 = tallBush.clone();
+tallBush2.position.z = -100;
+
+tallBush5 = tallBush2.clone();
+tallBush5.position.z = -230;
+tallBush5.y = 17;
+
+tallBush6 = tallBush1.clone();
+tallBush6.position.z = -163;
+
+// Shorter bushes on the left
+var bushGeometry1 = new THREE.BoxGeometry(40, 17, 5);
+var shortBush = new THREE.Mesh( bushGeometry1, bushMaterial);
+shortBush.rotation.y += 90*(Math.PI/180);
+shortBush.position.set(-67, 0, -208);
+
+// Shorter bushes on the back right
+var bushGeometry2 = new THREE.BoxGeometry(50, 15, 5);
+var shortBush1 = new THREE.Mesh( bushGeometry2, bushMaterial);
+shortBush1.rotation.y = shortBush.rotation.y;
+shortBush1.position.set(45, 0, 66);
+var shortBush2 = shortBush1.clone();
+shortBush2.position.z = shortBush1.position.z + 50;
+var shortBush3 = shortBush1.clone();
+shortBush3.position.z = shortBush2.position.z + 50;
+var shortBush2 = shortBush1.clone();
+shortBush2.position.z = shortBush1.position.z + 50;
+var shortBush4 = shortBush1.clone();
+shortBush4.rotation.y += 90*(Math.PI/180);
+shortBush4.position.z = shortBush1.position.z - 23;
+shortBush4.position.x = shortBush1.position.x + 22;
+var shortBush19 = shortBush4.clone();
+shortBush19.position.x = shortBush4.position.x + 50;
+
+// Shorter bushes on the right
+var shortBush5 = shortBush4.clone();
+shortBush5.position.z = shortBush4.position.z - 102;
+shortBush5.position.x = shortBush4.position.x + 43;
+var shortBush6 = shortBush5.clone();
+shortBush6.rotation.y += 90*(Math.PI/180);
+shortBush6.position.z = shortBush5.position.z - 22;
+shortBush6.position.x = shortBush5.position.x - 22;
+var shortBush7 = shortBush6.clone();
+shortBush7.position.z = shortBush7.position.z - 50;
+var shortBush8 = shortBush5.clone();
+shortBush8.position.z = shortBush5.position.z - 98;
+shortBush8.position.x = shortBush5.position.x + 1;
+var shortBush9 = shortBush8.clone();
+shortBush9.position.x = shortBush8.position.x + 80;
+var shortBush10 = shortBush9.clone();
+shortBush10.position.x = shortBush9.position.x + 80;
+var shortBush11 = shortBush6.clone();
+shortBush11.position.x = shortBush6.position.x + 100;
+var shortBush12 = shortBush11.clone();
+shortBush12.position.z = shortBush11.position.z - 50;
+var shortBush13 = shortBush6.clone();
+shortBush13.position.x = shortBush6.position.x + 180;
+var shortBush14 = shortBush13.clone();
+shortBush14.position.z = shortBush13.position.z - 50;
+var shortBush15 = shortBush5.clone();
+shortBush15.position.x = shortBush5.position.x + 80;
+var shortBush16 = shortBush15.clone();
+shortBush16.position.x = shortBush15.position.x + 80;
+var shortBush17 = shortBush13.clone();
+shortBush17.position.x = shortBush13.position.x + 65;
+var shortBush18 = shortBush17.clone();
+shortBush18.position.z = shortBush17.position.z - 50;
+
+// All tall bushes
+var tallBushes = new THREE.Group();
+tallBushes.add(
+	tallBush,
+	tallBush1,
+	tallBush2,
+	tallBush5,
+	tallBush6,
+	tallBush7,
+	tallBush8,
+	shortBush,
+	shortBush1,
+	shortBush2,
+	shortBush3,
+	shortBush4,
+	shortBush5,
+	shortBush6,
+	shortBush7,
+	shortBush8,
+	shortBush9,
+	shortBush10,
+	shortBush11,
+	shortBush12,
+	shortBush13,
+	shortBush14,
+	shortBush15,
+	shortBush16,
+	shortBush17,
+	shortBush18,
+	shortBush19
+);
+scene.add(tallBushes);
+	
+//Cubehouses
+var cubeHouseGeometry = new THREE.BoxGeometry(35, 35, 80);
+	
+var cubeHouseMaterials = [
+		new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedTile.png', function(texture) {
+			texture = repeatTextures(texture, 3, 1);
+		}), side: THREE.DoubleSide}), // RIGHT SIDE
+		new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedTile.png', function(texture){
+			texture = repeatTextures(texture, 3, 1);
+		}), side: THREE.DoubleSide }), // LEFT SIDE
+		new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedTile.png', function(texture){
+			texture = repeatTextures(texture, 1, 1);
+		}),  side: THREE.DoubleSide }), // TOP SIDE
+		new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedTile.png', function(texture){
+			texture = repeatTextures(texture, 3, 1);
+		}),  side: THREE.DoubleSide }),// BOTTOM SIDE
+		new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedTile.png', function(texture){
+			texture = repeatTextures(texture, 1, 1);
+		}),  side: THREE.DoubleSide }), // FRONT SIDE
+		new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedTile.png', function(texture){
+			texture = repeatTextures(texture, 1, 1);
+		}),  side: THREE.DoubleSide }) // BACK SIDE
+	];
+var cubeHouseBaseMaterial = new THREE.MeshFaceMaterial(cubeHouseMaterials);
+var cubeHouseBase = new THREE.Mesh(cubeHouseGeometry, cubeHouseBaseMaterial);
+cubeHouseBase.position.set(150, 0.75, -120);
+
+var cubeHouse = new THREE.Group();
+
+// Cube house windows
+var cubeHouseWindow = plane(17, 0.25, 16,'brokenGlassWithFrame',1,1);
+cubeHouseWindow.rotation.x += 90*(Math.PI/180);
+cubeHouseWindow.position.set(146, 6, -80);
+
+var cubeHouseWindowSide1 = cubeHouseWindow.clone();
+cubeHouseWindowSide1.rotation.z -= 90*(Math.PI/180);
+cubeHouseWindowSide1.position.set(132, 6, -92);
+
+var cubeHouseWindowSide2 = cubeHouseWindowSide1.clone();
+cubeHouseWindowSide2.position.y = -95;
+
+// Cube house door
+var cubeHouseDoor = plane(7, 0.25, 19,'door',1,1);
+cubeHouseDoor.rotation.x += 90*(Math.PI/180);
+cubeHouseDoor.position.set(160, 0.75, -80);
+
+// Cube house
+var cubeHouseRoof = plane(82, 0.75, 37,'damagedRoof',1,1);
+cubeHouseRoof.rotation.y += 90*(Math.PI/180);
+cubeHouseRoof.position.set(149, 18.5, -120);
+
+cubeHouse.add(
+	cubeHouseBase,
+	cubeHouseWindow,
+	cubeHouseWindowSide1,
+	cubeHouseWindowSide2,
+	cubeHouseDoor,
+	cubeHouseRoof
+);
+	
+var cubeHouse1 = cubeHouse.clone();
+cubeHouse1.position.x = cubeHouse.position.x + 80;
+	
+var cubeHouse2 = cubeHouse1.clone();
+cubeHouse2.position.x = cubeHouse1.position.x + 80;
+
+// Cubehouse group
+var cubeHouses = new THREE.Group();
+	cubeHouses.add(
+		cubeHouse,
+		cubeHouse1,
+		cubeHouse2
+	);
+scene.add(cubeHouses);
+
+// Roof houses
+var roofMaterial = new THREE.MeshLambertMaterial( { map: new THREE.TextureLoader().load(imagePrefix + 'damagedWood.jpg'), side: THREE.DoubleSide});
+
+// Roof
+var roofGeometry = new THREE.Geometry();
+var v1 = new THREE.Vector3(0,15,0);
+var v2 = new THREE.Vector3(0,0,-15);
+var v3 = new THREE.Vector3(0,0,15);
+roofGeometry.vertices.push(v1);
+roofGeometry.vertices.push(v2);
+roofGeometry.vertices.push(v3);
+roofGeometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+
+
+roofGeometry.faceVertexUvs[0].push([
+        new THREE.Vector2(0,0),
+        new THREE.Vector2(0.5,0),
+		new THREE.Vector2(0.5,0.5)
+		]);
+
+var roofTriangleFront = new THREE.Mesh( roofGeometry, roofMaterial);
+roofTriangleFront.rotation.y += 90*(Math.PI/180);
+roofTriangleFront.position.set(0, 20, 25);
+
+var roofTriangleBack = roofTriangleFront.clone();
+roofTriangleBack.position.set(0, 20, -25);
+
+var roofTopLeft = plane(22,1,50,'roofHouseRoof',1,1);
+roofTopLeft.rotation.z += 45*(Math.PI/180);
+roofTopLeft.position.set(-7.5, 27, 0);
+
+var roofTopRight = plane(22,1,50,'roofHouseRoof',1,1);
+roofTopRight.rotation.z += -45*(Math.PI/180);
+roofTopRight.position.set(7.5, 27, 0);
+
+// Base
+var roofHouseGeometry = new THREE.BoxGeometry(30, 40, 50);
+
+var roofHouseMaterials = [
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedWood.jpg', function(texture) {
+		texture = repeatTextures(texture, 3, 1);
+	}), side: THREE.DoubleSide}), // RIGHT SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedWood.jpg', function(texture){
+		texture = repeatTextures(texture, 3, 1);
+	}), side: THREE.DoubleSide }), // LEFT SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedRoof.jpg', function(texture){
+		texture = repeatTextures(texture, 1, 1);
+	}),  side: THREE.DoubleSide }), // TOP SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedWood.jpg', function(texture){
+		texture = repeatTextures(texture, 3, 1);
+	}),  side: THREE.DoubleSide }),// BOTTOM SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedWood.jpg', function(texture){
+		texture = repeatTextures(texture, 1, 1);
+	}),  side: THREE.DoubleSide }), // FRONT SIDE
+	new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load(imagePrefix + 'damagedWood.jpg', function(texture){
+		texture = repeatTextures(texture, 1, 1);
+	}),  side: THREE.DoubleSide }) // BACK SIDE
+];
+var roofHouseBaseMaterial = new THREE.MeshFaceMaterial(roofHouseMaterials);
+var roofHouseBase = new THREE.Mesh(roofHouseGeometry, roofHouseBaseMaterial);
+
+// Upstairs windows
+var upstairCubeGeometry = new THREE.BoxGeometry(30, 8, 16);
+var upstairCube = new THREE.Mesh(upstairCubeGeometry, roofHouseBaseMaterial);
+upstairCube.position.set(0, 23, 15);
+
+var upstairCube1 = upstairCube.clone();
+upstairCube1.position.set(0, 23, -15);
+
+var roofHouseWindow = plane(5.5, 0.25, 4.5,'brokenGlassWithFrame',1,1);
+roofHouseWindow.rotation.z += 90*(Math.PI/180);
+roofHouseWindow.rotation.x += 90*(Math.PI/180);
+roofHouseWindow.position.set( -15, 23.5, 11);
+
+var roofHouseWindow1 = roofHouseWindow.clone();
+roofHouseWindow.position.set( -15, 23.5, 19);
+var roofHouseWindow2 = roofHouseWindow.clone( -15, 23.5, -11);
+roofHouseWindow2.position.set( -15, 23.5, -11);
+var roofHouseWindow3 = roofHouseWindow.clone( -15, 23.5, -11);
+roofHouseWindow3.position.set( -15, 23.5, -19);
+var roofHouseWindow4 = roofHouseWindow.clone( -15, 23.5, -11);
+roofHouseWindow4.position.set( 15, 23.5, -11);
+var roofHouseWindow5 = roofHouseWindow.clone( -15, 23.5, -11);
+roofHouseWindow5.position.set( 15, 23.5, -19);
+var roofHouseWindow6 = roofHouseWindow.clone( -15, 23.5, -11);
+roofHouseWindow6.position.set( 15, 23.5, 11);
+var roofHouseWindow7 = roofHouseWindow.clone( -15, 23.5, -11);
+roofHouseWindow7.position.set( 15, 23.5, 19);
+
+// Downstairs windows
+var roofHouseDownWindow = plane(11, 0.25, 15,'brokenGlassWithFrame',1,1);
+roofHouseDownWindow.rotation.z += 90*(Math.PI/180);
+roofHouseDownWindow.rotation.x += 90*(Math.PI/180);
+roofHouseDownWindow.position.set( -15, 6, 0);
+
+var roofHouseDownWindow1 = roofHouseDownWindow.clone();
+roofHouseDownWindow1.position.set( -15, 6, 16);
+var roofHouseDownWindow2 = roofHouseDownWindow.clone();
+roofHouseDownWindow2.position.set( -15, 6, -16);
+var roofHouseDownWindow3 = roofHouseDownWindow.clone();
+roofHouseDownWindow3.position.set( 0, 6, 25);
+roofHouseDownWindow3.rotation.z = 0;
+var roofHouseDownWindow4 = roofHouseDownWindow.clone();
+roofHouseDownWindow4.position.set( 15, 6, -16);
+var roofHouseDownWindow5 = roofHouseDownWindow.clone();
+roofHouseDownWindow5.position.set( 15, 6, 16);
+
+// Roof house garden
+var roofHouseGarden = plane(12, 2.5, 17,'damagedRoof',1,1);
+roofHouseGarden.position.set(-95, -4, 0);
+var roofHouseGarden1 = roofHouseGarden.clone();
+roofHouseGarden1.position.z = -30;
+var roofHouseGarden2 = roofHouseGarden1.clone();
+roofHouseGarden2.position.z = roofHouseGarden1.position.z - 15;
+var roofHouseGarden3 = roofHouseGarden2.clone();
+roofHouseGarden3.position.z = roofHouseGarden2.position.z -29;
+
+var roofHouseGardens = new THREE.Group();
+
+roofHouseGardens.add(
+	roofHouseGarden,
+	roofHouseGarden1,
+	roofHouseGarden2,
+	roofHouseGarden3
+);
+scene.add(roofHouseGardens);
+
+// Door
+var roofHouseDoor = plane(7, 0.25, 19,'door',1,1);
+roofHouseDoor.rotation.z += 90*(Math.PI/180);
+roofHouseDoor.rotation.x += 90*(Math.PI/180);
+roofHouseDoor.position.set(15, 0, 0);
+
+var roofHouse = new THREE.Group();
+
+// House
+roofHouse.add(
+	roofHouseBase,
+	roofTopLeft,
+	roofTopRight,
+	roofTriangleFront,
+	roofTriangleBack,
+	upstairCube,
+	upstairCube1,
+	roofHouseWindow,
+	roofHouseWindow1,
+	roofHouseWindow2,
+	roofHouseWindow3,
+	roofHouseWindow4,
+	roofHouseWindow5,
+	roofHouseWindow6,
+	roofHouseWindow7,
+	roofHouseDownWindow,
+	roofHouseDownWindow1,
+	roofHouseDownWindow2,
+	roofHouseDownWindow3,
+	roofHouseDownWindow4,
+	roofHouseDownWindow5,
+	roofHouseDoor
+);
+roofHouse.position.set(-120, 0, -15);
+
+// All roof houses
+var roofHouses = new THREE.Group();
+
+var roofHouse1 = roofHouse.clone();
+roofHouse1.position.z = roofHouse.position.z - 45;
+var roofHouse2 = roofHouse1.clone();
+roofHouse2.position.z = roofHouse1.position.z - 85;
+roofHouse2.rotation.y += -90*(Math.PI/180);
+var roofHouse11 = roofHouse.clone();
+roofHouse11.position.x = roofHouse1.position.x - 120;
+var roofHouse12 = roofHouse11.clone();
+roofHouse12.position.z = roofHouse12.position.z - 45;
+
+var roofHouse3 = roofHouse2.clone();
+roofHouse3.position.z = roofHouse2.position.z - 45;
+
+var roofHouse4 = roofHouse.clone();
+roofHouse4.position.z = 65;
+roofHouse4.rotation.y += -90*(Math.PI/180);
+var roofHouse5 = roofHouse4.clone();
+roofHouse5.position.x = roofHouse4.position.x - 45;
+var roofHouse18 = roofHouse4.clone();
+roofHouse18.position.z = roofHouse4.position.z - 75;
+roofHouse18.rotation.y -= 90*(Math.PI/180);
+
+var roofHouse13 = roofHouse4.clone();
+roofHouse13.position.x = roofHouse5.position.x - 65;
+var roofHouse6 = roofHouse5.clone();
+roofHouse6.rotation.y += 180*(Math.PI/180);
+roofHouse6.position.z = roofHouse6.position.z + 75;
+var roofHouse7 = roofHouse6.clone();
+roofHouse7.position.x = roofHouse6.position.x + 45;
+var roofHouse14 = roofHouse7.clone();
+roofHouse14.position.x = roofHouse7.position.x - 110;
+
+var roofHouse8 = roofHouse1.clone();
+roofHouse8.position.z = 200;
+var roofHouse9 = roofHouse8.clone();
+roofHouse9.position.z = roofHouse8.position.z + 45;
+var roofHouse16 = roofHouse8.clone();
+roofHouse16.position.x = roofHouse8.position.x - 65;
+
+var roofHouse10 = roofHouse9.clone();
+roofHouse10.rotation.y -= 90*(Math.PI/180);
+roofHouse10.position.z = roofHouse9.position.z + 85;
+var roofHouse15 = roofHouse10.clone();
+roofHouse15.position.x = roofHouse10.position.x - 45;
+
+
+roofHouses.add(
+	roofHouse,
+	roofHouse1,
+	roofHouse2,
+	roofHouse3,
+	roofHouse4,
+	roofHouse5,
+	roofHouse6,
+	roofHouse7,
+	roofHouse8,
+	roofHouse9,
+	roofHouse10,
+	roofHouse11,
+	roofHouse12,
+	roofHouse13,
+	roofHouse14,
+	roofHouse15,
+	roofHouse16
+);
+scene.add(roofHouses);
+
+var bigHouse = roofHouse.clone();
+bigHouse.scale.set(2, 2, 2);
+bigHouse.position.set(-250, 0, -320);
+scene.add(bigHouse);
+
+var bigHouse1 = bigHouse.clone();
+bigHouse1.position.z = -450;
+scene.add(bigHouse1);
+
 //ambientlight
-var light = new THREE.AmbientLight(0x6e0f02,1);
+var light = new THREE.AmbientLight(0x8a6060, .5);
 scene.add(light);
 
-//spotlight
-var keyLight = new THREE.DirectionalLight(0xdddddd, 1);
-keyLight.position.set(-80, 80, 80);
-scene.add(keyLight);
+//rotating pointlight
+var pointLight = new THREE.PointLight( 0xFD3D14, 4, 50);
+var pointLight1 = pointLight.clone();
+pointLight1.position.z = pointLight.position.z - 20;
+var pointLight2 = pointLight1.clone();
+pointLight2.position.z = pointLight1.position.z - 40;
+var pointLight3 = pointLight2.clone();
+pointLight3.position.z = pointLight2.position.x - 100;
+var pointLight4 = pointLight3.clone();
+pointLight4.position.z = pointLight3.position.z + 150;
+pointLight4.position.x = pointLight3.position.x - 90;
+var pointLight5 = pointLight3.clone();
+pointLight5.position.set(pointLight4.position.x + 100, pointLight4.position.y, pointLight4.position.z + 200);
+var pointLight6 = pointLight.clone();
+pointLight6.position.set(50, 15, 50);
 
-//lighthelper
-var keyLightHelper = new THREE.DirectionalLightHelper(keyLight, 15);
-scene.add(keyLightHelper);
+var pointLights = new THREE.Group();
 
+pointLights.add(
+	pointLight,
+	pointLight1,
+	pointLight2,
+	pointLight3,
+	pointLight4,
+	pointLight5,
+	pointLight6
+);
+scene.add(pointLights);
 
 var render = function(){
 	requestAnimationFrame(render);
 	delta = clock.getDelta();
+	
+	rotateSign();
 
-	cube.rotation.x += 0.3 * delta;
-	cube.rotation.y += 0.3 * delta;
-
-	rotateSign(delta);
+	var time = Date.now() * 0.0005;
+	pointLights.position.x = Math.sin( time * 0.7) * 30;
+	pointLights.position.y = Math.cos( time * 0.5) * 40;
+	pointLights.position.z = Math.cos( time * 0.3) * 30;
 
 	if(noClip){
 		controls.update();
@@ -722,7 +1256,7 @@ var render = function(){
 var degSign = 0;
 var step = +1;
 
-function rotateSign(x){
+function rotateSign(){
 	if(loadingSign){
 		if(degSign >= 150){
 			step = -1;
@@ -734,15 +1268,39 @@ function rotateSign(x){
 		sign.children[4].rotation.z -= .5*(Math.PI/180) * step;
 	
 		degSign += step;
-		console.log('test '+degSign);
 	}
 };
-
 //controls
 controls = new THREE.OrbitControls(camera); 
 controls.autoRotate = true;
 controls.autoRotateSpeed = 2;
 controls.noKeys = true;
+
+// Importing cars
+var loader = new THREE.ObjectLoader();
+
+var car = loader.load( 'Models/volkswagen.json', function ( car ) {
+	car.scale.set(0.03, 0.03, 0.03);
+	car.rotation.y += 45*(Math.PI/180);
+	car.position.set(170, 4, -445);
+	
+	var car1 = car.clone();
+	car1.position.set(-10, 4.2, -305);
+	car1.rotation.set(5*(Math.PI/180), 25*(Math.PI/180), -8*(Math.PI/180));
+
+	var car2 = car.clone();
+	car2.position.set(180, 4.8, 23);
+	car2.rotation.set(-6*(Math.PI/180), 40*(Math.PI/180), 3*(Math.PI/180));
+
+	var cars = new THREE.Group();
+	cars.add(
+		car,
+		car1,
+		car2
+	);
+
+	scene.add(cars);
+});
 
 // Create renderer
 var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
